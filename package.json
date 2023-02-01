@@ -1,0 +1,19 @@
+{
+  "name": "m02uf4_22223",
+  "version": "1.0.0",
+  "description": "Primer proyecto de Node y Mongo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JCastilla13/M02UF4_22223.git"
+  },
+  "author": "Jesus Castilla",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/JCastilla13/M02UF4_22223/issues"
+  },
+  "homepage": "https://github.com/JCastilla13/M02UF4_22223#readme"
+}
