@@ -15,6 +15,7 @@ const client = new MongoClient(url);
 const dbName = 'abascal';
 
 let db;
+let collection;
 
 async function db_connect() {
   // Use connect method to connect to the server
@@ -30,14 +31,85 @@ db_connect()
   .then(info => console.log(info))
   .catch(msg => console.error(msg));
 
-let http_server =  http.createServer(function(request, response){
-	let collection = db.collection('characters');
-	console.log(collection);
-	console.log("Alguien se conecta");
-	response.write('ola k ase');
-	response.end();
-})
+function send_characters (response)
+{
 
-	http_server.listen(8080);
+collection = db.collection('characters');
+
+	collection.find({}).toArray().then(characters => {
+		let names = [];
+		
+		for (let i = 0; i < characters.length; i++){
+			names.push(characters[i].name);
+		}
+
+		if (request.url == "characters"){
+		
+			names.push(characters[i].name);
+		}
+		
+
+		response.write(JSON.stringify(names));
+		response.end();
+
+	});
+}
+
+function send_age (response, url)
+{
+
+if (url.length < 3){
+
+	response.write("ERROR: Edad Erronea");
+	response.end();
+	return;
+}
+
+
+collection = db.collection('characters');
+
+	collection.find({"name":url[2]}).toArray().then(character => {
+		let data = {
+			age:character[0].age
+		};
+		
+
+		response.write(JSON.stringify(data));
+		response.end();
+
+	});
+}
+
+
+let http_server =  http.createServer(function(request, response){
+	if (request.url == "/favicon.ico"){
+		return;
+	}
+    
+	let url = request.url.split("/");
+
+	switch (url[1]){
+		case "characters":
+		send_characters (response);
+			break;
+		case "age":
+			send_age(response, url);
+			break;
+
+	default:
+		response.write("Página principal");
+		response.end();
+
+	}
+
+
+	console.log(url);
+
+	console.log(request.url);
+
+	
+});
+
+	http_server.listen(6969);
 
 
