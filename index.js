@@ -67,10 +67,12 @@ if (url.length < 3){
 
 
 collection = db.collection('characters');
+console.log(url);
 
 	collection.find({"name":url[2]}).toArray().then(character => {
+		console.log(character);
 		let data = {
-			age:character[0].age
+			age: character[0].age
 		};
 		
 
