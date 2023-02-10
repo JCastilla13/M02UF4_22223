@@ -6,6 +6,7 @@
 
 const http = require('http');
 const { MongoClient } = require('mongodb');
+const fs = require('fs')
 
 // Connection URL
 const url = 'mongodb://127.0.0.1:27017';
@@ -31,10 +32,13 @@ db_connect()
   .then(info => console.log(info))
   .catch(msg => console.error(msg));
 
+
+
+
 function send_characters (response)
 {
 
-collection = db.collection('characters');
+	collection = db.collection('characters');
 
 	collection.find({}).toArray().then(characters => {
 		let names = [];
@@ -42,12 +46,6 @@ collection = db.collection('characters');
 		for (let i = 0; i < characters.length; i++){
 			names.push(characters[i].name);
 		}
-
-		if (request.url == "characters"){
-		
-			names.push(characters[i].name);
-		}
-		
 
 		response.write(JSON.stringify(names));
 		response.end();
@@ -60,23 +58,28 @@ function send_age (response, url)
 
 if (url.length < 3){
 
-	response.write("ERROR: Edad Erronea");
+	response.write("ERROR: Introduce un personaje");
 	response.end();
 	return;
+  
 }
-
-
 collection = db.collection('characters');
 console.log(url);
 
-	collection.find({"name":url[2]}).toArray().then(character => {
+	collection.find({"name":url[2]}).project({_id:0,age:1}).toArray().then(character => {
 		console.log(character);
-		let data = {
+		  if (character.length == 0){
+			response.write("ERROR: Edad Erronea");
+			response.end();
+			return;
+		}
+
+		/*let data = {
 			age: character[0].age
-		};
+		};*/
 		
 
-		response.write(JSON.stringify(data));
+		response.write(JSON.stringify(character[0]));
 		response.end();
 
 	});
@@ -99,16 +102,23 @@ let http_server =  http.createServer(function(request, response){
 			break;
 
 	default:
-		response.write("Página principal");
-		response.end();
+		fs.readFile("index.html", function (err, data){
+			if(err){
+				console.error(err);
+				response.writeHead(404, {'Content-Type':'text/html'});
+				response.write("ERROR 404: el archivo no está en este castillo");
+				response.end();
+
+				return;
+			}
+			
+			response.writeHead(200, {'Content-Type':'text/html'});
+			response.write(data);
+			response.end();
+
+		});
 
 	}
-
-
-	console.log(url);
-
-	console.log(request.url);
-
 	
 });
 
