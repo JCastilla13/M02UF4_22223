@@ -9,9 +9,9 @@
 <nav>
 <form>
 <ul>
-<li><button id="characters-button">Personajes</button></li>
-<li><button id="items-button">Objetos</button></li>
-<li><button id="weapons-button">Armas</button></li>
+<li><button id="characters-button" onclick="getCharacters(); return false;">Personajes</button></li>
+<li><button id="items-button" onclick="getItems(); return false;">Objetos</button></li>
+<li><button id="weapons-button" onclick="getWeapons(); return false;">Armas</button></li>
 </ul>
 </form>
 </nav>
@@ -19,5 +19,61 @@
 <main id="container">
 
 </main>
+<script>
+function getCharacters()
+{
+
+		fetch("http://10.40.1.25:6969/characters")
+			.then(response => response.json())
+			.then(characters => {
+
+		let list = "<ul>";
+		for (let i = 0; i < characters.length; i++){
+			list += "<li>" + characters[i] + "</li>";
+		}	
+		list += "</ul>"
+
+		document.getElementById("container").innerHTML = list;
+
+	});
+}
+
+function getItems()
+{
+
+		fetch("http://10.40.1.25:6969/items")
+			.then(response => response.json())
+			.then(items => {
+
+		let list = "<ul>";
+		for (let i = 0; i < items.length; i++){
+			list += "<li>" + items[i] + "</li>";
+		}	
+		list += "</ul>"
+
+		document.getElementById("container").innerHTML = list;
+
+	});
+}
+
+function getWeapons()
+{
+
+		fetch("http://10.40.1.25:6969/weapons")
+			.then(response => response.json())
+			.then(weapons => {
+
+		let list = "<ul>";
+		for (let i = 0; i < weapons.length; i++){
+			list += "<li>" + weapons[i] + "</li>";
+		}	
+		list += "</ul>"
+
+		document.getElementById("container").innerHTML = list;
+
+	});
+}
+
+</script>
 </body>
 </html>
