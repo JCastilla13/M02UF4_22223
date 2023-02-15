@@ -53,6 +53,42 @@ function send_characters (response)
 	});
 }
 
+function send_items (response)
+{
+
+	collection = db.collection('items');
+
+	collection.find({}).toArray().then(items => {
+		let names = [];
+		
+		for (let i = 0; i < items.length; i++){
+			names.push(items[i].item);
+		}
+
+		response.write(JSON.stringify(names));
+		response.end();
+
+	});
+}
+
+function send_weapons (response)
+{
+
+	collection = db.collection('weapons');
+
+	collection.find({}).toArray().then(weapons => {
+		let names = [];
+		
+		for (let i = 0; i < weapons.length; i++){
+			names.push(weapons[i].weapon);
+		}
+
+		response.write(JSON.stringify(names));
+		response.end();
+
+	});
+}
+
 function send_age (response, url)
 {
 
@@ -95,7 +131,13 @@ let http_server =  http.createServer(function(request, response){
 
 	switch (url[1]){
 		case "characters":
-		send_characters (response);
+			send_characters(response);
+			break;
+		case "items":
+			send_items(response);
+			break;
+		case "weapons":
+			send_weapons(response);
 			break;
 		case "age":
 			send_age(response, url);
