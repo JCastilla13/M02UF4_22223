@@ -17,6 +17,8 @@ const dbName = 'abascal';
 
 let db;
 let collection;
+//let characterID = [];
+//let itemsID = [];
 
 async function db_connect() {
   // Use connect method to connect to the server
@@ -52,7 +54,34 @@ function send_characters (response)
 
 	});
 }
+/*
+function send_characters_items (response, url)
+{
 
+	collection = db.collection('characters');
+
+	collection.find({"name": url[2]}).project({_id: 0, id_character: 1}).toArray()
+		.then(characterID => {
+			console.log(characterID);
+		
+		collection = db.collection("characters_items");
+		collection.find( {"id_character":characterID[0].id_character} ).project( {_id: 0, id_item: 1} ).toArray()
+			.then(itemsID => {
+
+				console.log(itemsID);
+				collection = db.collection("items");
+
+			let itemsName = [];
+
+			for (let i = 0; i < itemsID.length; i++){
+				collection.find( {"id_item": itemsID[i].id_item} ).project( {_id: 0, item: 1} ).toArray()
+					.then(item => {
+						itemsName.push(item[0].item);
+						console.log(item);
+
+	});
+}
+*/
 function send_items (response)
 {
 
@@ -132,6 +161,9 @@ let http_server =  http.createServer(function(request, response){
 	switch (url[1]){
 		case "characters":
 			send_characters(response);
+			break;
+		case "characters_items":
+			send_characters_items(response, url);
 			break;
 		case "items":
 			send_items(response);
