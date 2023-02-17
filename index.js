@@ -17,8 +17,6 @@ const dbName = 'abascal';
 
 let db;
 let collection;
-//let characterID = [];
-//let itemsID = [];
 
 async function db_connect() {
   // Use connect method to connect to the server
@@ -40,7 +38,7 @@ db_connect()
 function send_characters (response)
 {
 
-	collection = db.collection('characters');
+	let collection = db.collection('characters');
 
 	collection.find({}).toArray().then(characters => {
 		let names = [];
@@ -54,38 +52,66 @@ function send_characters (response)
 
 	});
 }
-/*
-function send_characters_items (response, url)
+
+function send_character_items (response, url)
 {
+	let name = url[2].trim();
+	if (name == ""){
+		response.write("ERROR: URL mal formada");
+		response.end();
 
-	collection = db.collection('characters');
+		return;
+	}
 
-	collection.find({"name": url[2]}).project({_id: 0, id_character: 1}).toArray()
-		.then(characterID => {
-			console.log(characterID);
+	let collection = db.collection('characters');
+	collection.find({"name":name}).toArray().then(character => {
+		if (character.length != 1){
+			response.write("ERROR: el personaje "+name+" no existe");
+			response.end();
+
+			return;
+		}
+
+		let id = character[0].id_character;
+
+		let collection = db.collection('characters_items');
+		collection.find({"id_character":id}).toArray().then(ids => {
+			if (ids.length == 0){
+				
+				response.weite("[]");
+				response.end();
+
+				return;
+			}
 		
-		collection = db.collection("characters_items");
-		collection.find( {"id_character":characterID[0].id_character} ).project( {_id: 0, id_item: 1} ).toArray()
-			.then(itemsID => {
+			let ids_items = [];
 
-				console.log(itemsID);
-				collection = db.collection("items");
+			ids.forEach(element => {
+				ids_items.push(element.id_item);
+			});
 
-			let itemsName = [];
+			let collection = db.collection('items');
+			collection.find({"id_item": {$in:ids_items} }).toArray().then(items => {
+				response.write(JSON.stringify(items));
+				response.end();
 
-			for (let i = 0; i < itemsID.length; i++){
-				collection.find( {"id_item": itemsID[i].id_item} ).project( {_id: 0, item: 1} ).toArray()
-					.then(item => {
-						itemsName.push(item[0].item);
-						console.log(item);
+				return;
+			});
 
+		});
 	});
 }
-*/
-function send_items (response)
+
+function send_items (response, url)
 {
 
-	collection = db.collection('items');
+	if (url.length >= 3){
+		send_character_items (response, url);
+
+		return;
+	}
+
+	let collection = db.collection('items');
 
 	collection.find({}).toArray().then(items => {
 		let names = [];
@@ -103,7 +129,7 @@ function send_items (response)
 function send_weapons (response)
 {
 
-	collection = db.collection('weapons');
+	let collection = db.collection('weapons');
 
 	collection.find({}).toArray().then(weapons => {
 		let names = [];
@@ -128,8 +154,8 @@ if (url.length < 3){
 	return;
   
 }
-collection = db.collection('characters');
-console.log(url);
+	let collection = db.collection('characters');
+	console.log(url);
 
 	collection.find({"name":url[2]}).project({_id:0,age:1}).toArray().then(character => {
 		console.log(character);
@@ -162,11 +188,8 @@ let http_server =  http.createServer(function(request, response){
 		case "characters":
 			send_characters(response);
 			break;
-		case "characters_items":
-			send_characters_items(response, url);
-			break;
 		case "items":
-			send_items(response);
+			send_items(response, url);
 			break;
 		case "weapons":
 			send_weapons(response);
