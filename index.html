@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8" />
 <title>ENTIerrame</title>
 </head>
 <body>
@@ -19,6 +20,17 @@
 <main id="container">
 
 </main>
+
+<form action="/character_form" method="POST">
+<h2>Añadir personaje</h2>
+<p><label for="character-name">Nombre</label>
+<input type="text" name="name" id="character-name" /></p>
+<p><label for="character-age">Edad</label>
+<input type="text" name="age" id="character-age" /></p>
+<p><input type="submit" value="¡Añadir personaje!" /></p>
+</form>
+
+
 <script>
 function getCharacters()
 {

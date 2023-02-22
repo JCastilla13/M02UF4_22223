@@ -7,6 +7,7 @@
 const http = require('http');
 const { MongoClient } = require('mongodb');
 const fs = require('fs')
+const qs = require('querystring');
 
 // Connection URL
 const url = 'mongodb://127.0.0.1:27017';
@@ -176,6 +177,52 @@ if (url.length < 3){
 	});
 }
 
+function insert_character(request, response)
+{
+	if (request.method != "POST"){
+		response.write("ERROR: Formulario no enviado");
+		response.end();
+
+		return;
+	}
+	
+	let data = "";
+	request.on('data', function(character_chunk){
+		data += character_chunk;
+	});
+
+	request.on('end', function(){
+		console.log(data);
+		
+		let info = qs.parse(data);
+
+		console.log(info);
+		
+		let collection = db.collection("characters");
+
+		if (info.name == undefined){
+			response.write("ERROR: Nombre no definido");
+			response.end();
+			return;
+		}
+		if (info.age == undefined){
+			response.write("ERROR: Edad no definida");
+			response.end();
+			return;
+		}
+		
+		let insert_info = {
+			name: info.name,
+			age: parseInt(info.age)
+		};
+
+		collection.insertOne(insert_info);
+
+		response.write("Nuevo personaje "+insert_info.name+" insertado");
+
+		response.end();
+	});
+}
 
 let http_server =  http.createServer(function(request, response){
 	if (request.url == "/favicon.ico"){
@@ -196,6 +243,11 @@ let http_server =  http.createServer(function(request, response){
 			break;
 		case "age":
 			send_age(response, url);
+			break;
+
+		case "character_form":
+			insert_character(request, response);
+			
 			break;
 
 	default:
