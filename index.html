@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>ENTIerrame</title>
+<title>MongoDB+NodeJS</title>
 </head>
 <body>
 <header>
-<h1>ENTIerrame</h1>
+<h1>MongoDB+NodeJS</h1>
 <nav>
 <form>
 <ul>
@@ -15,6 +15,16 @@
 <li><button id="weapons-button" onclick="getWeapons(); return false;">Armas</button></li>
 </ul>
 </form>
+<section>
+<form id="characters">
+<ul>
+<li><button id="payoh-button" onclick="getCharactersInfo(1); return false;">Payoh</button></li>
+<li><button id="yulen-button" onclick="getCharactersInfo(2); return false;">Yulen</button></li>
+<li><button id="yuca-button" onclick="getCharactersInfo(3); return false;">Yuca</button></li>
+<li><button id="josema-button" onclick="getCharactersInfo(4); return false;">Josema</button></li>
+</ul>
+</form>
+<section>
 </nav>
 </header>
 <main id="container">
@@ -80,6 +90,41 @@ function getWeapons()
 			list += "<li>" + weapons[i] + "</li>";
 		}	
 		list += "</ul>"
+
+		document.getElementById("container").innerHTML = list;
+
+	});
+}
+
+function getCharactersInfo(id_character)
+{
+	fetch("/?id_character="+id_character)
+		.then(response => response.json())
+		.then(info => {
+
+	let list = "<ul>";
+	
+		list += "<li>Name: "+info[0].name+"</li>";
+
+		list += "<li>Age: "+info[0].age+"</li>";
+
+		list += "<li>Race: "+info[0].race+"</li>";
+
+		list += "<li>Gender: "+info[0].gender+"</li>";
+
+		list += "<li>Class: "+info[0].class+"</li>";
+
+		list += "<li>Height: "+info[0].height+"</li>";
+
+		list += "<li>Weigh: "+info[0].weigh+"</li>";
+
+		list += "<li>Origin: "+info[0].origen+"</li>";
+
+		list += "<li>Description: "+info[0].description+"</li>";
+
+		list += "<li>ID: "+info[0].id_character+"</li>";
+
+	list += "</ul>";
 
 		document.getElementById("container").innerHTML = list;
 
