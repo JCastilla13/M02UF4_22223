@@ -164,16 +164,22 @@ if (url.length < 3){
 			response.write("ERROR: Edad Erronea");
 			response.end();
 			return;
-		}
-
-		/*let data = {
-			age: character[0].age
-		};*/
-		
+		}	
 
 		response.write(JSON.stringify(character[0]));
 		response.end();
 
+	});
+}
+
+function send_character_info(response, id_character)
+{
+	let collection = db.collection('characters');
+
+	collection.find({"id_character":Number(id_character)}).toArray().then(character => {
+
+		response.write(JSON.stringify(character));
+		response.end();
 	});
 }
 
@@ -230,6 +236,7 @@ let http_server =  http.createServer(function(request, response){
 	}
     
 	let url = request.url.split("/");
+	let value = request.url.split("?");
 
 	switch (url[1]){
 		case "characters":
@@ -251,6 +258,17 @@ let http_server =  http.createServer(function(request, response){
 			break;
 
 	default:
+
+		if(value[1])
+		{
+			let values = value[1].split("=");
+			let id_character = values[1];
+
+			send_character_info(response, id_character);
+			
+			return;
+		}
+
 		fs.readFile("index.html", function (err, data){
 			if(err){
 				console.error(err);
@@ -269,8 +287,6 @@ let http_server =  http.createServer(function(request, response){
 
 	}
 	
-});
-
-	http_server.listen(6969);
+}).listen(6969);
 
 
